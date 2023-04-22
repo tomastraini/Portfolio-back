@@ -2,6 +2,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 var router = express.Router({mergeParams: true});
+const cors = require('cors');
+app.use(cors({
+    origin: '*'
+}));
 //////////////////
 const app = express();
 const port = process.env.PORT || 1002;
