@@ -49,7 +49,10 @@ app.route('/Comments').post(async (req, res) => {
       const result = await collection.insertOne(comment);
       if (result && result.insertedId !== undefined && result.insertedId !== null) {
         const insertedComment = await collection.findOne({ _id: result.insertedId });
-        res.json(insertedComment);
+        res.json({
+          _id: new ObjectId(),
+          "comment": req.body.comment,
+        });
       } else {
         res.status(500).send('Failed to insert comment');
       }
