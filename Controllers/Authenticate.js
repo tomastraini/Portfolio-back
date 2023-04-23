@@ -28,6 +28,10 @@ const authenticateToken=(req, res, next) => {
   })
 }
 //
+app.route('/wakeUpCall').get(async (req, res) => {
+  res.sendStatus(200);
+});
+
 app.route('/authenticate').post(async (req, res) => {
   if(req.body.username == undefined || req.body.username == null)
   {
@@ -62,6 +66,7 @@ app.route('/authenticate').post(async (req, res) => {
   }
   res.json(response);
 });
+
 // app.all("*", authenticateToken)
 
 module.exports = authenticateToken;
