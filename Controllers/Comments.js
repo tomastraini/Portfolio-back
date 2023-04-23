@@ -44,10 +44,13 @@ app.route('/Comments').post(async (req, res) => {
       var ip = req.headers['x-forwarded-for'] ||
       req.socket.remoteAddress ||
       null;
+      var arr = ip.split(",");
+      var ipfinal = arr.splice(0,1).join("");
+
       const comment = {
         _id: new ObjectId(),
         "comment": req.body.comment,
-        "clientIp": ip
+        "clientIp": ipfinal
       }
       const result = await collection.insertOne(comment);
       if (result && result.insertedId !== undefined && result.insertedId !== null) {
