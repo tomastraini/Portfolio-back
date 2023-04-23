@@ -9,8 +9,6 @@ app.route('/Comments').get(authenticate,async (req, res) => {
     const db = mongoUtil.getDb();
     const collection = db.collection('portfolioComments');
     const result = await collection.find().toArray();
-
-    console.log(ip);
     if(result.length == 0)
     {
         res.send([])
