@@ -9,6 +9,8 @@ app.route('/Comments').get(authenticate,async (req, res) => {
     const db = mongoUtil.getDb();
     const collection = db.collection('portfolioComments');
     const result = await collection.find().toArray();
+
+    console.log(ip);
     if(result.length == 0)
     {
         res.send([])
@@ -41,10 +43,13 @@ app.route('/Comments').post(async (req, res) => {
       await mongoUtil.connectToServer();
       const db = mongoUtil.getDb();
       const collection = db.collection('portfolioComments');
+      var ip = req.headers['x-forwarded-for'] ||
+      req.socket.remoteAddress ||
+      null;
       const comment = {
         _id: new ObjectId(),
         "comment": req.body.comment,
-        "clientIp": req.socket.remoteAddress
+        "clientIp": ip
       }
       const result = await collection.insertOne(comment);
       if (result && result.insertedId !== undefined && result.insertedId !== null) {
