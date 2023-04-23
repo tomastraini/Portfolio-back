@@ -43,7 +43,8 @@ app.route('/Comments').post(async (req, res) => {
       const collection = db.collection('portfolioComments');
       const comment = {
         _id: new ObjectId(),
-        "comment": req.body.comment
+        "comment": req.body.comment,
+        "clientIp": req.socket.remoteAddress
       }
       const result = await collection.insertOne(comment);
       if (result && result.insertedId !== undefined && result.insertedId !== null) {
