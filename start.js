@@ -1,6 +1,7 @@
 // Main Router
 require('./router')
 
+require('./Controllers/Authenticate')
 
 // All routes
 require('./Controllers/Comments')

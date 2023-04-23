@@ -1,10 +1,10 @@
 const app = require('../router')
 var mongoUtil = require( '../db' );
 const { ObjectId } = require('mongodb');
-
+const authenticate = require("./Authenticate")
 
   
-app.route('/Comments').get(async (req, res) => {
+app.route('/Comments').get(authenticate,async (req, res) => {
     await mongoUtil.connectToServer();
     const db = mongoUtil.getDb();
     const collection = db.collection('portfolioComments');
@@ -17,7 +17,7 @@ app.route('/Comments').get(async (req, res) => {
     res.json(result)
 });
 
-app.route('/Comments/:id').get(async (req, res) => {
+app.route('/Comments/:id').get(authenticate,async (req, res) => {
     try {
       await mongoUtil.connectToServer();
       const db = mongoUtil.getDb();
@@ -58,7 +58,7 @@ app.route('/Comments').post(async (req, res) => {
     }
 });
 
-app.route('/Comments/:id').put(async (req, res) => {
+app.route('/Comments/:id').put(authenticate,async (req, res) => {
     try {
       await mongoUtil.connectToServer();
       const db = mongoUtil.getDb();
@@ -82,7 +82,7 @@ app.route('/Comments/:id').put(async (req, res) => {
 });
 
 
-app.route('/Comments').delete(async (req, res) => {
+app.delete('/Comments',authenticate,async (req, res) => {
     try {
       await mongoUtil.connectToServer();
       const db = mongoUtil.getDb();
