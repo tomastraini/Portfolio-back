@@ -51,7 +51,7 @@ app.route('/Visitors').post(async (req, res) => {
     }
 });
 
-app.route('/Visitors/:id').delete(async (req, res) => {
+app.route('/Visitors/:id').delete(authenticate,async (req, res) => {
     try {
       await mongoUtil.connectToServer();
       const db = mongoUtil.getDb();
@@ -73,7 +73,7 @@ app.route('/Visitors/:id').delete(async (req, res) => {
   
   
 
-app.route('/VisitorsWhitelist').get(async (req, res) => {
+app.route('/VisitorsWhitelist').get(authenticate,async (req, res) => {
     try {
       await mongoUtil.connectToServer();
       const db = mongoUtil.getDb();
@@ -88,7 +88,7 @@ app.route('/VisitorsWhitelist').get(async (req, res) => {
     }
   });
 
-app.route('/VisitorsWhitelist').post(async (req, res) => {
+app.route('/VisitorsWhitelist').post(authenticate,async (req, res) => {
     try {
       await mongoUtil.connectToServer();
       const db = mongoUtil.getDb();
@@ -112,7 +112,7 @@ app.route('/VisitorsWhitelist').post(async (req, res) => {
     }
 });
 
-app.route('/VisitorsWhitelist/:id').delete(async (req, res) => {
+app.route('/VisitorsWhitelist/:id').delete(authenticate,async (req, res) => {
     try {
       await mongoUtil.connectToServer();
       const db = mongoUtil.getDb();
