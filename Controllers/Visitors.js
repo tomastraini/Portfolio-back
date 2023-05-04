@@ -17,39 +17,54 @@ app.route('/Visitors').get(authenticate,async (req, res) => {
 });
 
 app.route('/Visitors').post(async (req, res) => {
-    try {
-        await mongoUtil.connectToServer();
-        const db = mongoUtil.getDb();
-        const visitorsCollection = db.collection('portfolioVisitors');
-        const whitelistCollection = db.collection('portfolioVisitorsWhitelist');
-        const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || null;
-        const arr = ip.split(",");
-        const ipfinal = arr.splice(0,1).join("");
+  try {
+      await mongoUtil.connectToServer();
+      const db = mongoUtil.getDb();
+      const visitorsCollection = db.collection('portfolioVisitors');
+      const whitelistCollection = db.collection('portfolioVisitorsWhitelist');
+      const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || null;
+      const arr = ip.split(",");
+      const ipfinal = arr.splice(0,1).join("");
 
-        // Check if visitor is in the whitelist
-        const isWhitelisted = await whitelistCollection.findOne({ ip: ipfinal });
-        if (isWhitelisted) {
-            return res.json(null); // Visitor is already in the whitelist
-        }
+      // Check if visitor is in the whitelist
+      const isWhitelisted = await whitelistCollection.findOne({ ip: ipfinal });
+      if (isWhitelisted) {
+          return res.json(null); // Visitor is already in the whitelist
+      }
 
-        const visitor = {
-        _id: new ObjectId(),
-        "visitorIp": ipfinal,
-        "date": new Date()
-        }
+      const existingVisitor = await visitorsCollection.findOne({ visitorIp: ipfinal });
 
-        const result = await visitorsCollection.insertOne(visitor);
-        if (result && result.insertedId !== undefined && result.insertedId !== null) {
-        const insertedVisitor = await visitorsCollection.findOne({ _id: result.insertedId });
-        res.json(visitor);
-        } else {
-        res.status(500).send('Failed to insert visitor');
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Internal Server Error');
-    }
+      if (existingVisitor) {
+          // Update visitor with times property
+          const updatedVisitor = await visitorsCollection.findOneAndUpdate(
+              { _id: existingVisitor._id },
+              { $inc: { times: 1 } },
+              { returnOriginal: false }
+          );
+          res.json(updatedVisitor.value);
+      } else {
+          // Create a new visitor object with times property set to 1
+          const visitor = {
+              _id: new ObjectId(),
+              visitorIp: ipfinal,
+              date: new Date(),
+              times: 1
+          };
+
+          const result = await visitorsCollection.insertOne(visitor);
+          if (result && result.insertedId !== undefined && result.insertedId !== null) {
+              const insertedVisitor = await visitorsCollection.findOne({ _id: result.insertedId });
+              res.json(insertedVisitor);
+          } else {
+              res.status(500).send('Failed to insert visitor');
+          }
+      }
+  } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
+  }
 });
+
 
 app.route('/Visitors/:id').delete(authenticate,async (req, res) => {
     try {

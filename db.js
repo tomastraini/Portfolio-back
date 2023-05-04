@@ -19,7 +19,6 @@ module.exports = {
       try {
         await client.connect();
         _db = client.db(); // Set _db to the database object
-        console.log("Successfully connected to MongoDB!");
         resolve();
       } catch(e){
         console.log(e);
